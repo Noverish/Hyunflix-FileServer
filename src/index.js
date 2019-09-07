@@ -7,7 +7,7 @@ const smi2vtt = require('./smi2vtt');
 const srt2vtt = require('./srt2vtt');
 
 const PORT = process.env.PORT || 80;
-const ROOT_PATH = process.env.SERVE_PATH || '/archive';
+const ROOT_PATH = process.env.SERVE_PATH || __dirname;
 
 const server = http.createServer((req, res) => {
   const path = decodeURI(req.url);
