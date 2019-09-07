@@ -1,0 +1,21 @@
+{
+  "name": "fileserver",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon src/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "detect-character-encoding": "^0.8.0",
+    "iconv-lite": "^0.5.0",
+    "sami-parser": "^0.5.3",
+    "serve-handler": "^6.1.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.2"
+  }
+}
