@@ -36,7 +36,7 @@ function smi2vtt(path) {
   } else if (results.hasOwnProperty('kr')) {
     return results['kr'];
   } else {
-    return results[Object.keys[results][0]];
+    return results[Object.keys(results)[0]];
   }
 }
 

@@ -1,63 +1,38 @@
-const http = require('http');
-const handler = require('serve-handler');
-const morgan = require('morgan');
-const fs = require('fs');
-const url = require("url");
-const { extname, parse, join } = require('path');
+const express = require('express');
 
-const smi2vtt = require('./smi2vtt');
-const srt2vtt = require('./srt2vtt');
+const decodePath = require('./middlewares/path');
+const logger = require('./middlewares/logger');
+const validateToken = require('./middlewares/token');
+const checkAuthoriation = require('./middlewares/authorization');
+const handle = require('./handle');
 
 const PORT = process.env.PORT || 80;
 const ROOT_PATH = process.env.SERVE_PATH || __dirname;
 
-morgan.token('url', (req, res) => { return decodeURI(req.url); });
-const logger = morgan('combined');
+const app = express();
 
-const server = http.createServer((req, res) => {
-  logger(req, res, function (err) {
-    if (err) {
-      console.error(err);
-      return;
-    };
- 
-    const path = decodeURI(url.parse(req.url).pathname);
-    const ext = extname(path);
-    
-    if (ext === '.vtt') {
-      const parsed = parse(path);
-      const smiPath = join(ROOT_PATH, parsed.dir, `${parsed.name}.smi`);
-      const srtPath = join(ROOT_PATH, parsed.dir, `${parsed.name}.srt`);
-    
-      if (fs.existsSync(smiPath)) {
-        res.setHeader('Content-Type', 'text/vtt; charset=utf-8');
-        res.statusCode = 200;
-        res.end(smi2vtt(smiPath));
-        return;
-      } else if (fs.existsSync(srtPath)) {
-        res.setHeader('Content-Type', 'text/vtt; charset=utf-8');
-        res.statusCode = 200;
-        res.end(srt2vtt(srtPath));
-        return;
-      }
-    }
-    
-    return handler(req, res, {
-      "public": ROOT_PATH,
-      "headers": [
-        {
-          "source" : "**/*.@(smi|srt|vtt)",
-          "headers" : [{
-            "key" : "Content-Type",
-            "value" : "text/plain"
-          }],
-        },
-      ]
-    });
-  });
-});
+app.use(decodePath);
+app.use(logger);
+app.use(validateToken);
+app.use(checkAuthoriation);
 
-server.listen(PORT, () => {
+app.get('/', (req, res, next) => {
+  return handle(req, res, next);
+})
+
+app.get('/:path*', (req, res, next) => {
+  return handle(req, res, next);
+})
+
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500);
+  res.json(err);
+})
+
+app.listen(PORT, () => {
   console.log(`* File Server Started at ${PORT}!`);
   console.log(`* File Server Serve at ${ROOT_PATH}!`);
 })
+
+module.exports.ROOT_PATH = ROOT_PATH;
