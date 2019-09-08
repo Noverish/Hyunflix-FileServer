@@ -14,10 +14,10 @@ morgan.token('date', (req, res) => {
   return moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
 });
 
-morgan.token('user_id', (req, res) => {
-  return (req.headers['user_id']) ? req.headers['user_id'] : undefined;
+morgan.token('user-id', (req, res) => {
+  return (req['userId']) ? req['userId'] : undefined;
 });
 
-const consoleFormat = '[:date] <:remote-addr> :user_id - :method :status :response-time ms ":url"';
+const consoleFormat = '[:date] <:remote-addr> :user-id - :method :status :response-time ms ":url"';
 
 module.exports = morgan(consoleFormat);
