@@ -3,6 +3,12 @@ const request = require('request');
 const AUTH_URL = process.env.AUTH_URL || 'localhost';
 
 function validateToken(req, res, next) {
+  if(req.url.split('?')[0].endsWith('.vtt')) {
+    req['authorizations'] = ['/'];
+    req['userId'] = 0;
+    next();
+  };
+  
   const cookie = req.headers['cookie'];
   
   const options = {
