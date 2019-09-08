@@ -1,7 +1,9 @@
 const http = require('http');
 const handler = require('serve-handler');
-const { extname, parse, join } = require('path');
+const morgan = require('morgan');
 const fs = require('fs');
+const url = require("url");
+const { extname, parse, join } = require('path');
 
 const smi2vtt = require('./smi2vtt');
 const srt2vtt = require('./srt2vtt');
@@ -9,39 +11,49 @@ const srt2vtt = require('./srt2vtt');
 const PORT = process.env.PORT || 80;
 const ROOT_PATH = process.env.SERVE_PATH || __dirname;
 
+morgan.token('url', (req, res) => { return decodeURI(req.url); });
+const logger = morgan('combined');
+
 const server = http.createServer((req, res) => {
-  const path = decodeURI(req.url);
-  const ext = extname(path);
-  
-  if (ext === '.vtt') {
-    const parsed = parse(path);
-    const smiPath = join(ROOT_PATH, parsed.dir, `${parsed.name}.smi`);
-    const srtPath = join(ROOT_PATH, parsed.dir, `${parsed.name}.srt`);
-  
-    if (fs.existsSync(smiPath)) {
-      res.setHeader('Content-Type', 'text/vtt; charset=utf-8');
-      res.statusCode = 200;
-      res.end(smi2vtt(smiPath));
+  logger(req, res, function (err) {
+    if (err) {
+      console.error(err);
       return;
-    } else if (fs.existsSync(srtPath)) {
-      res.setHeader('Content-Type', 'text/vtt; charset=utf-8');
-      res.statusCode = 200;
-      res.end(srt2vtt(srtPath));
-      return;
+    };
+ 
+    const path = decodeURI(url.parse(req.url).pathname);
+    const ext = extname(path);
+    
+    if (ext === '.vtt') {
+      const parsed = parse(path);
+      const smiPath = join(ROOT_PATH, parsed.dir, `${parsed.name}.smi`);
+      const srtPath = join(ROOT_PATH, parsed.dir, `${parsed.name}.srt`);
+    
+      if (fs.existsSync(smiPath)) {
+        res.setHeader('Content-Type', 'text/vtt; charset=utf-8');
+        res.statusCode = 200;
+        res.end(smi2vtt(smiPath));
+        return;
+      } else if (fs.existsSync(srtPath)) {
+        res.setHeader('Content-Type', 'text/vtt; charset=utf-8');
+        res.statusCode = 200;
+        res.end(srt2vtt(srtPath));
+        return;
+      }
     }
-  }
-  
-  return handler(req, res, {
-    "public": ROOT_PATH,
-    "headers": [
-      {
-        "source" : "**/*.@(smi|srt|vtt)",
-        "headers" : [{
-          "key" : "Content-Type",
-          "value" : "text/plain"
-        }],
-      },
-    ]
+    
+    return handler(req, res, {
+      "public": ROOT_PATH,
+      "headers": [
+        {
+          "source" : "**/*.@(smi|srt|vtt)",
+          "headers" : [{
+            "key" : "Content-Type",
+            "value" : "text/plain"
+          }],
+        },
+      ]
+    });
   });
 });
 
