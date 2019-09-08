@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 
 const decodePath = require('./middlewares/path');
 const logger = require('./middlewares/logger');
@@ -13,6 +14,7 @@ const app = express();
 
 app.use(decodePath);
 app.use(logger);
+app.use(cors());
 
 if (process.env.SKIP_AUTHENTICATION !== 'true') {
   app.use(validateToken);
