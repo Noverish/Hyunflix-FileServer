@@ -19,6 +19,7 @@ function validateToken(req, res, next) {
     
     if (response.statusCode === 200) {
       req['authorizations'] = JSON.parse(response.body)['authorizations'];
+      req.headers['user_id'] = JSON.parse(response.body)['userId'];
       next();
     } else if (response.statusCode === 401) {
       res.status(401);

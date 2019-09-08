@@ -13,6 +13,7 @@
     "detect-character-encoding": "^0.8.0",
     "express": "^4.17.1",
     "iconv-lite": "^0.5.0",
+    "moment-timezone": "^0.5.26",
     "morgan": "^1.9.1",
     "request": "^2.88.0",
     "sami-parser": "^0.5.3",

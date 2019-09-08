@@ -13,8 +13,13 @@ const app = express();
 
 app.use(decodePath);
 app.use(logger);
-app.use(validateToken);
-app.use(checkAuthoriation);
+
+if (process.env.SKIP_AUTHENTICATION !== 'true') {
+  app.use(validateToken);
+  app.use(checkAuthoriation);
+} else {
+  console.log('* Skip Authentication!');
+}
 
 app.get('/', (req, res, next) => {
   return handle(req, res, next);
