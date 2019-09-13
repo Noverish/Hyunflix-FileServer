@@ -9,10 +9,21 @@ export default function (req, res, next) {
     next();
   };
   
+  const newHeaders = {};
+  if(req.headers['authorization']) {
+    newHeaders['authorization'] = req.headers['authorization'];
+  }
+  if(req.headers['cookie']) {
+    newHeaders['cookie'] = req.headers['cookie'];
+  }
+  
   const options = {
     method: 'GET',
     url: AUTH_URL,
-    headers: req.headers
+      headers: {
+        'authorization': req.headers['authorization'],
+        'cookie': req.headers['cookie'],
+      },
   };
   
   request(options, (err, response, body) => {

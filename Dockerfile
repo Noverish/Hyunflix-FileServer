@@ -10,4 +10,4 @@ COPY src           /app/src
 COPY package.json  /app
 COPY tsconfig.json /app
 
-CMD ["npm", "start"]
+CMD ["npm", "run", "dev"]
