@@ -1,8 +1,8 @@
-const iconv = require('iconv-lite');
-const fs = require('fs');
-const detectEncoding = require('detect-character-encoding');
+import * as iconv from 'iconv-lite';
+import * as fs from 'fs';
+import * as detectEncoding from 'detect-character-encoding';
 
-function srt2vtt (path) {
+export default function (path: string) {
   const fileBuffer = fs.readFileSync(path);
   const encoding = detectEncoding(fileBuffer).encoding;
   const data = iconv.decode(fileBuffer, encoding);
@@ -62,5 +62,3 @@ function convertSrtCue(caption) {
   }
   return cue;
 }
-
-module.exports = srt2vtt;

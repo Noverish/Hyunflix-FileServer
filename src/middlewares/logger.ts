@@ -20,4 +20,4 @@ morgan.token('user-id', (req, res) => {
 
 const consoleFormat = '[:date] <:remote-addr> :user-id - :method :status :response-time ms ":url"';
 
-module.exports = morgan(consoleFormat);
+export default morgan(consoleFormat);

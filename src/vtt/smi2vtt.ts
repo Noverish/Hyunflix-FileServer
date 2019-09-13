@@ -1,9 +1,9 @@
-const parser = require('sami-parser');
-const iconv = require('iconv-lite');
-const fs = require('fs');
-const detectEncoding = require('detect-character-encoding');
+import * as parser from 'sami-parser';
+import * as iconv from 'iconv-lite';
+import * as fs from 'fs';
+import * as detectEncoding from 'detect-character-encoding';
 
-function smi2vtt(path) {
+export default function(path: string) {
   const fileBuffer = fs.readFileSync(path);
   const encoding = detectEncoding(fileBuffer).encoding;
   const content = iconv.decode(fileBuffer, encoding);
@@ -53,5 +53,3 @@ function convertTimeFormat(millis) {
 
   return `${padh}:${padm}:${pads}.${padms}`;
 }
-
-module.exports = smi2vtt;

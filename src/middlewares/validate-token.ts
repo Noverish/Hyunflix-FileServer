@@ -1,20 +1,18 @@
-const request = require('request');
+import * as request from 'request';
 
-const AUTH_URL = process.env.AUTH_URL || 'localhost';
+import { AUTH_URL } from '@src/config';
 
-function validateToken(req, res, next) {
+export default function (req, res, next) {
   if(req.url.split('?')[0].endsWith('.vtt')) {
     req['authorizations'] = ['/'];
     req['userId'] = 0;
     next();
   };
   
-  const cookie = req.headers['cookie'];
-  
   const options = {
     method: 'GET',
-    url: `http://${AUTH_URL}`,
-    headers: { cookie }
+    url: AUTH_URL,
+    headers: req.headers
   };
   
   request(options, (err, response, body) => {
@@ -23,9 +21,9 @@ function validateToken(req, res, next) {
       return;
     }
     
-    if (response.statusCode === 200) {
-      req['authorizations'] = JSON.parse(response.body)['authorizations'];
-      req['userId'] = JSON.parse(response.body)['userId'];
+    if (response.statusCode === 204) {
+      req['authorizations'] = response.headers['x-hyunsub-authorizations'].split(', ');
+      req['userId'] = response.headers['x-hyunsub-userid'];
       next();
     } else if (response.statusCode === 401) {
       res.status(401);
@@ -36,5 +34,3 @@ function validateToken(req, res, next) {
     }
   });
 }
-
-module.exports = validateToken;

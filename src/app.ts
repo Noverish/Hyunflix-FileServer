@@ -1,14 +1,12 @@
-const express = require('express');
-const cors = require('cors');
+import * as express from 'express';
+import * as cors from 'cors';
 
-const decodePath = require('./middlewares/path');
-const logger = require('./middlewares/logger');
-const validateToken = require('./middlewares/token');
-const checkAuthoriation = require('./middlewares/authorization');
-const handle = require('./handle');
-
-const PORT = process.env.PORT || 80;
-const ROOT_PATH = process.env.SERVE_PATH || __dirname;
+import { PORT, ROOT_PATH, SKIP_AUTHENTICATION } from '@src/config';
+import decodePath from './middlewares/path';
+import logger from './middlewares/logger';
+import validateToken from './middlewares/validate-token';
+import checkAuthorization from './middlewares/authorization';
+import handle from './handle';
 
 const app = express();
 
@@ -16,9 +14,9 @@ app.use(decodePath);
 app.use(logger);
 app.use(cors());
 
-if (process.env.SKIP_AUTHENTICATION !== 'true') {
+if (!SKIP_AUTHENTICATION) {
   app.use(validateToken);
-  app.use(checkAuthoriation);
+  app.use(checkAuthorization);
 } else {
   console.log('* Skip Authentication!');
 }
@@ -41,5 +39,3 @@ app.listen(PORT, () => {
   console.log(`* File Server Started at ${PORT}!`);
   console.log(`* File Server Serve at ${ROOT_PATH}!`);
 })
-
-module.exports.ROOT_PATH = ROOT_PATH;

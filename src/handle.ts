@@ -1,11 +1,11 @@
-const handler = require('serve-handler');
-const url = require("url");
-const { extname } = require('path');
+import * as handler from 'serve-handler';
+import * as url from 'url';
+import { extname } from 'path';
 
-const vtt = require('./vtt');
+import { ROOT_PATH } from '@src/config';
+import vtt from './vtt';
 
-function handle(req, res, next) {
-  const { ROOT_PATH } = require('./');
+export default function handle(req, res, next) {
   const path = decodeURI(url.parse(req.url).pathname);
   const ext = extname(path);
   
@@ -26,5 +26,3 @@ function handle(req, res, next) {
     ]
   });
 }
-
-module.exports = handle;
