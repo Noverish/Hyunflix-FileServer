@@ -18,6 +18,10 @@ morgan.token('user-id', (req, res) => {
   return (req['userId']) ? req['userId'] : undefined;
 });
 
+morgan.token('url', (req, res) => {
+  return decodeURI(req.originalUrl);
+});
+
 const consoleFormat = '[:date] <:remote-addr> :user-id - :method :status :response-time ms ":url"';
 
 export default morgan(consoleFormat);

@@ -2,7 +2,6 @@ import * as express from 'express';
 import * as cors from 'cors';
 
 import { PORT, ROOT_PATH, SKIP_AUTHENTICATION } from '@src/config';
-import decodePath from './middlewares/path';
 import logger from './middlewares/logger';
 import validateToken from './middlewares/validate-token';
 import checkAuthorization from './middlewares/authorization';
@@ -10,7 +9,6 @@ import handle from './handle';
 
 const app = express();
 
-app.use(decodePath);
 app.use(logger);
 app.use(cors());
 
