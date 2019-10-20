@@ -1,10 +1,9 @@
 import * as express from 'express';
 import * as cors from 'cors';
 
-import { PORT, ROOT_PATH, SKIP_AUTHENTICATION } from '@src/config';
+import { PORT, ROOT_PATH } from '@src/config';
 import logger from './middlewares/logger';
-import validateToken from './middlewares/validate-token';
-import checkAuthorization from './middlewares/authorization';
+import validateHeader, { checkAllowedPath } from './middlewares/validate-header';
 import handle from './handle';
 
 const app = express();
@@ -12,12 +11,8 @@ const app = express();
 app.use(logger);
 app.use(cors());
 
-if (!SKIP_AUTHENTICATION) {
-  app.use(validateToken);
-  app.use(checkAuthorization);
-} else {
-  console.log('* Skip Authentication!');
-}
+app.use(validateHeader);
+app.use(checkAllowedPath);
 
 app.get('/', (req, res, next) => {
   return handle(req, res, next);
