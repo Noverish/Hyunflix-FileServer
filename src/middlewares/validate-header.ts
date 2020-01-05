@@ -1,8 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 
-import { Auth } from '@src/models';
-
-const AUTH_HEADER = 'x-hyunsub-auth';
+import { Session } from '@src/models';
+import { AUTH_HEADER } from '@src/config';
 
 export default function (req: Request, res: Response, next: NextFunction) {
   const authString: string = (req.headers[AUTH_HEADER] || '').toString();
@@ -11,14 +10,13 @@ export default function (req: Request, res: Response, next: NextFunction) {
     res.status(401);
     res.json({ msg: 'Unauthorized' });
   } else {
-    req['auth'] = JSON.parse(authString);
+    req['session'] = JSON.parse(authString);
     next();
   }
 }
 
 export function checkAllowedPath(req: Request, res: Response, next: NextFunction) {
-  const auth: Auth = req['auth'];
-  const allowedPaths: string[] = auth.allowedPaths;
+  const { allowedPaths }: Session = req['session'];
   const path: string = req.originalUrl;
   
   for (const allowedPath of allowedPaths) {
