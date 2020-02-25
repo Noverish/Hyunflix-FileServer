@@ -1,0 +1,15 @@
+version: '3.6'
+
+services:
+  file:
+    image: hyunsub/file:latest
+    build: .
+    container_name: file
+    volumes:
+      - /archive:/archive
+      - ./:/app # dev option
+    restart: always
+    environment:
+      - SERVE_PATH=/archive
+    ports:
+      - 8001:80

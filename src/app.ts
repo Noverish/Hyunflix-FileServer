@@ -1,34 +1,25 @@
 import * as express from 'express';
-import * as cors from 'cors';
 
 import { PORT, ROOT_PATH } from '@src/config';
-import logger from './middlewares/logger';
-import validateHeader, { checkAllowedPath } from './middlewares/validate-header';
-import handle from './handle';
+import { logger, validateToken, checkAllowedPaths } from '@src/middlewares';
+import handle from '@src/handle';
 
 const app = express();
 
 app.use(logger);
-app.use(cors());
+app.use(validateToken);
+app.use(checkAllowedPaths);
 
-app.use(validateHeader);
-app.use(checkAllowedPath);
-
-app.get('/', (req, res, next) => {
-  return handle(req, res, next);
-})
-
-app.get('/:path*', (req, res, next) => {
-  return handle(req, res, next);
-})
+app.get('/', handle);
+app.get('/:path*', handle);
 
 app.use((err, req, res, next) => {
   console.error(err);
   res.status(500);
   res.json(err);
-})
+});
 
 app.listen(PORT, () => {
   console.log(`* File Server Started at ${PORT}!`);
   console.log(`* File Server Serve at ${ROOT_PATH}!`);
-})
+});
