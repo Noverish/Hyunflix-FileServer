@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 
-import { Auth } from '@src/models';
-import { AUTH, errMsgs } from '@src/config';
+import { TokenPayload } from '@src/models';
+import { TOKEN_PAYLOAD_FIELD, errMsgs } from '@src/config';
 
 export default function (req: Request, res: Response, next: NextFunction) {
-  const { allowedPaths }: Auth = req[AUTH];
+  const { allowedPaths }: TokenPayload = req[TOKEN_PAYLOAD_FIELD];
   const path: string = req.path;
 
   for (const allowedPath of allowedPaths) {
