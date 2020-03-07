@@ -1,4 +1,5 @@
 import * as express from 'express';
+import * as cors from 'cors';
 
 import { PORT, ROOT_PATH } from '@src/config';
 import { logger, validateToken, checkAllowedPaths } from '@src/middlewares';
@@ -6,6 +7,7 @@ import handle from '@src/handle';
 
 const app = express();
 
+app.use(cors());
 app.use(logger);
 app.use(validateToken);
 app.use(checkAllowedPaths);
