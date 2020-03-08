@@ -1,19 +1,27 @@
+import { Request, Response } from 'express';
 import * as morgan from 'morgan';
-import * as moment from 'moment-timezone';
 
-morgan.token('remote-addr', (req, res) => {
-  return req.ip || req.connection?.remoteAddress;
+import { dateToString } from '@src/utils';
+import { TOKEN_PAYLOAD_FIELD, REAL_IP_HEADER } from '@src/config';
+
+morgan.token('remote-addr', (req: Request, res: Response) => {
+  if (req.get(REAL_IP_HEADER)) {
+    return req.get(REAL_IP_HEADER);
+  }
+
+  return req.ip || req.connection.remoteAddress;
 });
 
-morgan.token('date', (req, res) => {
-  return moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
+morgan.token('date', (req: Request, res: Response) => {
+  return dateToString(new Date());
 });
 
-morgan.token('url', (req, res) => {
-  return decodeURI(req.originalUrl);
+morgan.token('user-id', (req: Request, res: Response) => {
+  return req[TOKEN_PAYLOAD_FIELD]?.userId;
 });
 
-// TODO print user id
-const consoleFormat = '[:date] <:remote-addr> - :method :status :response-time ms ":url"';
+morgan.token('url', (req: Request, res: Response) => {
+  return decodeURI(req.path);
+});
 
-export default morgan(consoleFormat);
+export default morgan('[:date] <:remote-addr> (:user-id) :method :status :response-time ms ":url"');
