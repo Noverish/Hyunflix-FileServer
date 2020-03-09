@@ -15,11 +15,9 @@ export default function (path: string, req: Request, res: Response, next: NextFu
     res.setHeader('Content-Type', 'text/vtt; charset=utf-8');
     res.statusCode = 200;
     res.end(smi2vtt(smiPath));
-    return;
   } else if (fs.existsSync(srtPath)) {
     res.setHeader('Content-Type', 'text/vtt; charset=utf-8');
     res.statusCode = 200;
     res.end(srt2vtt(srtPath));
-    return;
   }
 }

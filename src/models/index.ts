@@ -3,3 +3,9 @@ export interface TokenPayload {
   authority: number;
   allowedPaths: string[];
 }
+
+export interface SMICue {
+  startTime: number;
+  endTime: number;
+  languages: {[lan: string]: string};
+}
